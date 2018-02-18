@@ -15,3 +15,19 @@ void setLedColor(byte n, byte r, byte g, byte b)
   analogWrite(RGB[n][2], b);
   }
 }
+
+/* setLedState
+ * set the n led to the s state
+ * 0 <= n <= 3
+ * 0 <= s <= 2
+ */
+void setLedState(byte n, byte s)
+{
+  if(s==0)
+    setLedColor(n,255,0,0);
+  if(s==1)
+    setLedColor(n,255,165,0);
+  if(s==2)
+    setLedColor(n,0,255,0);
+  
+}
