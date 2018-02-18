@@ -19,10 +19,12 @@
 #include <Keypad.h>
 extern Keypad keypad;
 
-extern const byte challengesSize[9][2];
-extern const char challenges[9][2][8];
+extern byte challengesStatus[8];
+extern const byte challengesSize[8][2];
+extern const char challenges[8][2][8];
 
 byte currentPage = 1;
+
 byte currentPassSize = 0;
 byte currentPass[8] = {'.','.','.','.','.','.','.','.'};
 
@@ -46,12 +48,15 @@ void loop()
     }
     else if(key == '#')
     {
+      checkChallenges();
       clearInput();
     }
     else
     {
       currentPass[currentPassSize++] = key;
     }
+
+    setChallengesStatus();
   }
 }
 
@@ -62,5 +67,44 @@ void clearInput()
   
   for(i=0;i<8;i++)
     currentPass[i] = '.';
+}
+
+void checkChallenges()
+{
+  byte i;
+  for(i=0;i<8;i++)
+  {
+    if(currentPassSize == challengesSize[i][0])
+      checkChallenge(i,0);
+    if(currentPassSize == challengesSize[i][1])
+      checkChallenge(i,1);
+  }
+}
+
+void checkChallenge(byte cn, byte cl)
+{
+  byte i;
+  bool check = true;
+  for(i=0;i<challengesSize[cn][cl];i++)
+  {
+    if(challenges[cn][cl][i] != currentPass[i])
+      check = false;
+  }
+  if(check == true)
+  {
+    if(cl == 0)
+      challengesStatus[cn] = 1;
+    if(cl == 1)
+      challengesStatus[cn] = 2;
+  }
+}
+
+void setChallengesStatus()
+{
+  byte i;
+  for(i=0;i<4;i++)
+  {
+    setLedState(i,challengesStatus[i+(currentPage-1)*4]);
+  }
 }
 
