@@ -19,9 +19,12 @@
 #include <Keypad.h>
 extern Keypad keypad;
 
-
 extern const byte challengesSize[9][2];
 extern const char challenges[9][2][8];
+
+byte currentPage = 1;
+byte currentPassSize = 0;
+byte currentPass[8] = {'.','.','.','.','.','.','.','.'};
 
 void setup()
 {
@@ -34,6 +37,30 @@ void loop()
   
   if (key != NO_KEY)
   {
-    Serial.println(key);
+    if(key == '*')
+    {
+      currentPage++;
+      if(currentPage == 3)  // max + 1
+        currentPage = 1;     // min
+      // in our case, 1 -> 2 -> 1 -> 2 ...
+    }
+    else if(key == '#')
+    {
+      clearInput();
+    }
+    else
+    {
+      currentPass[currentPassSize++] = key;
+    }
   }
 }
+
+void clearInput()
+{
+  byte currentPassSize = 0;
+  byte i;
+  
+  for(i=0;i<8;i++)
+    currentPass[i] = '.';
+}
+
