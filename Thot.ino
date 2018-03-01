@@ -22,6 +22,9 @@ extern Keypad keypad;
 #include <Adafruit_SSD1306.h>
 extern Adafruit_SSD1306 display;
 
+#include <MFRC522.h>
+extern MFRC522 mfrc522;
+
 extern byte challengesStatus[8];
 extern const byte challengesSize[8][2];
 extern const char challenges[8][2][8];
@@ -43,12 +46,16 @@ void setup()
   display.setTextSize(2);
   display.setTextColor(WHITE);
   display.setCursor(0,0);
+
+  MFRC522_setup();
   
   setChallengesStatus();
 }
 
 void loop()
 {
+  checkCard();
+  
   byte i;
   char key = keypad.getKey();
   
@@ -167,3 +174,25 @@ void checkWin()
   }
 }
 
+void checkCard()
+{
+  if (mfrc522.PICC_IsNewCardPresent())
+  {
+    if(mfrc522.PICC_ReadCardSerial())
+    {
+      if(mfrc522.PICC_GetType(mfrc522.uid.sak) == MFRC522::PICC_TYPE_MIFARE_1K)
+      {
+        if(mfrc522.uid.uidByte[0] == 132
+         &&mfrc522.uid.uidByte[1] == 27
+         &&mfrc522.uid.uidByte[2] == 129
+         &&mfrc522.uid.uidByte[3] == 99
+          )
+        {
+          challengesStatus[3] = 2;
+          setChallengesStatus();
+          checkWin();
+        }
+      }
+    }
+  }
+}
