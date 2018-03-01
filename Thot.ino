@@ -19,6 +19,9 @@
 #include <Keypad.h>
 extern Keypad keypad;
 
+#include <Adafruit_SSD1306.h>
+extern Adafruit_SSD1306 display;
+
 extern byte challengesStatus[8];
 extern const byte challengesSize[8][2];
 extern const char challenges[8][2][8];
@@ -31,6 +34,16 @@ byte currentPass[8] = {'.','.','.','.','.','.','.','.'};
 void setup()
 {
   Serial.begin(9600);
+
+  // Init Display
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  display.display();
+  display.clearDisplay();
+  display.display();
+  display.setTextSize(2);
+  display.setTextColor(WHITE);
+  display.setCursor(0,0);
+  
   setChallengesStatus();
 }
 
@@ -41,6 +54,9 @@ void loop()
   
   if (key != NO_KEY)
   {
+    display.clearDisplay();
+    display.setCursor(0,0);
+    
     if(key == '*')
     {
       currentPage++;
@@ -65,6 +81,13 @@ void loop()
 
     setChallengesStatus();
     checkWin();
+
+    for(i=0;i<currentPassSize;i++)
+      display.print((char)currentPass[i]);
+    display.print("\nPAGE ");
+    display.print(currentPage);
+    display.print("/2");
+    display.display();
 
     Serial.print("Key : ");
     Serial.println(key);
