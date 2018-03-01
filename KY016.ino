@@ -8,7 +8,7 @@ extern const byte RGB[4][3];
  */
 void setLedColor(byte n, byte r, byte g, byte b)
 {
-  if(n > 0 && n < 4)
+  if(n >= 0 && n < 4)
   {
   analogWrite(RGB[n][0], r);
   analogWrite(RGB[n][1], g);
@@ -24,10 +24,10 @@ void setLedColor(byte n, byte r, byte g, byte b)
 void setLedState(byte n, byte s)
 {
   if(s==0)
-    setLedColor(n,255,0,0);
+    setLedColor(n,100,0,0);
   if(s==1)
-    setLedColor(n,255,165,0);
+    setLedColor(n,50,10,0);
   if(s==2)
-    setLedColor(n,0,255,0);
+    setLedColor(n,0,100,0);
   
 }
